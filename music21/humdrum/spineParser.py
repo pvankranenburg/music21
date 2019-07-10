@@ -2508,9 +2508,26 @@ def kernTandemToObject(tandem):
         if numSharps == 0:
             numSharps = -1 * (tandem.count('-'))
         return key.KeySignature(numSharps)
-    elif tandem.endswith(':'):
-        thisKey = tandem[1:-1]
-        return key.Key(thisKey)
+    elif ':' in tandem:
+        mode_map = {
+            'ion':'ionian',
+            'dor':'dorian',
+            'phr':'phrygian',
+            'lyd':'lydian',
+            'mix':'mixolydian',
+            'aeo':'aeolian',
+            'loc':'locrian'
+        }
+        parts = tandem.split(':')
+        thisKey = parts[0][1:]
+        if len(parts) > 1:
+            try:
+                mode = mode_map[parts[1]]
+            except KeyError:
+                return key.Key(thisKey)
+            return key.Key(thisKey, mode)
+        else:
+            return key.Key(thisKey)
     else:
         return MiscTandem(tandem)
 
